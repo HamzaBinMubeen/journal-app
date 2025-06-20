@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { marked } from 'marked'
 
-const essays = [
-  { title: '"How to start a startup" by Paul Graham', file: '1.how_to_start_a_startup.md' },
-  { title: '"How to do Great Work" by Paul Graham', file: '2.how_to_do_great_work.md' },
-]
+// Dynamically import all markdown files from public/essays
+const essayFiles = import.meta.glob('/public/essays/*.md', { query: '?url', import: 'default', eager: true })
+
+const essays = Object.entries(essayFiles).map(([path, url]) => {
+  const file = path.split('/').pop()
+  // Remove extension, replace _ and - with spaces, capitalize each word
+  const base = file.replace(/\.md$/, '').replace(/[_-]/g, ' ')
+  const title = base.replace(/\b\w/g, c => c.toUpperCase())
+  return { title, file, url }
+})
 
 function App() {
   const [content, setContent] = useState(null)
@@ -36,7 +42,8 @@ function App() {
   }, [])
 
   const loadEssay = async (essay, push = true) => {
-    const res = await fetch(`/essays/${essay.file}`)
+    // Use the url property for fetching
+    const res = await fetch(essay.url)
     const text = await res.text()
     setContent(marked.parse(text))
     setTitle(essay.title)
@@ -135,8 +142,10 @@ function App() {
       <div className="container">
         {!content ? (
           <>
-            <div className="heading">hi.</div>
-            <div className="sub">here are some analysis of what i'm reading.</div>
+            <div className="heading">hi, i am hamza.</div>
+            <div className="sub">a startup founder.</div>
+            <div className="sub">here i analyze different essays/books that i'm reading in the startup ecosystem and how it applies to my startup life.</div>
+            <div className="sub">these are some topics that i've read and journaled, i hope you find them useful.</div>
             <ul className="essay-list">
               {essays.map((essay) => (
                 <li key={essay.file}>
@@ -146,6 +155,14 @@ function App() {
                 </li>
               ))}
             </ul>
+            <div className="sub">PS. i'm not a startup growth expert, i'm just a startup founder who is journaling here and sharing my thoughts.</div>
+            <div className="sub">if you like what you read or have some feedback, please reach out to me on</div>
+            <div className="sub">
+              <a href="https://www.linkedin.com/in/hamza-bin-mubeen/">linkedin</a> 
+              • 
+              <a href="https://www.instagram.com/hamza.bin.mubeen/"> instagram</a>
+            </div>
+            <div className="sub">or email me at <a href="mailto:ceo@theuniapp.com">ceo@theuniapp.com</a>.</div>
           </>
         ) : (
           <div>
