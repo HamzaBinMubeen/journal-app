@@ -36,7 +36,7 @@ function App() {
   }, [])
 
   const loadEssay = async (essay, push = true) => {
-    const res = await fetch(`/src/essays/${essay.file}`)
+    const res = await fetch(`/essays/${essay.file}`)
     const text = await res.text()
     setContent(marked.parse(text))
     setTitle(essay.title)
