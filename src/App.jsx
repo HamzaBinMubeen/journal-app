@@ -21,14 +21,18 @@ function App() {
   useEffect(() => {
     const match = window.location.pathname.match(/^\/essay\/(.+)$/)
     if (match) {
-      const file = match[1]
+      const path = match[1]
+      // Add .md extension back when finding the essay
+      const file = path.endsWith('.md') ? path : `${path}.md`
       const essay = essays.find(e => e.file === file)
       if (essay) loadEssay(essay, false)
     }
     window.onpopstate = () => {
       const match = window.location.pathname.match(/^\/essay\/(.+)$/)
       if (match) {
-        const file = match[1]
+        const path = match[1]
+        // Add .md extension back when finding the essay
+        const file = path.endsWith('.md') ? path : `${path}.md`
         const essay = essays.find(e => e.file === file)
         if (essay) loadEssay(essay, false)
       } else {
@@ -49,7 +53,9 @@ function App() {
     setTitle(essay.title)
     setCurrentFile(essay.file)
     if (push) {
-      window.history.pushState({}, '', `/essay/${essay.file}`)
+      // Remove the .md extension when pushing to history
+      const path = essay.file.replace(/\.md$/, '')
+      window.history.pushState({}, '', `/essay/${path}`)
     }
   }
 
